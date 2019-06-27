@@ -17,4 +17,31 @@ var connection = mysql.createConnection({
     database: "bamazonDB"
 });
 
+// connection to the mysql server and database
+connection.connect(function(err) {
+    if (err) throw err;
+    start();
+});
+
+//starts the app and initiates conversation with customer
+function start() {
+    console.log("\nWELCOME TO THE BAMAZON STORE!\n".blue);
+    inquirer.prompt(
+        {
+            name: "browse",
+            type: "confirm",
+            message: "Would you like to browse the available products?"
+        }
+
+    ).then(function(answer) {
+        if (answer.browse) {
+            showItems();
+            setTimeout(promptUser, 1000);
+        } else {
+            exit();
+        }
+    });
+}
+
+
 
