@@ -3,17 +3,17 @@ var mysql = require("mysql");
 var inquirer = require("inquirer");
 var table = require("console.table");
 var colors = require("colors");
-var itmeID = 0;
+var itemID = 0;
 var itemQuantity = 0;
 var selected;
 var statement;
 
 var connection = mysql.createConnection({
     host: "localhost",
-    port = 8000,
+    port: 3306,
 
     user: "root",
-    password: "",
+    password: "password",
     database: "bamazonDB"
 });
 
@@ -51,13 +51,13 @@ function showItems() {
         if (err) throw err;
         console.log("\nAll Products\n".cyan.underline);
         // console.log(res);
-        var products = [],
+        var products = [];
         for (var i = 0; i < res.length; i++) {
             products.push([res[i].item_id, res[i].product_name, res[i].department_name,
                 res[i].price, res[i].stock_quantity]);
         }
         var headings = ["Item ID", "Product", "Department", "Price ($)", "Quantity in Stock"];
-        console.log(headings, products);
+        console.table(headings, products);
     });
 }
 
@@ -78,7 +78,7 @@ function promptUser() {
         {
             name: "quantity",
             type: "input",
-            message: "Please enter the quantity of the item that you wuld like to purchase.",
+            message: "Please enter the quantity of the item that you would like to purchase.",
             validate: function(value) {
                 if (isNaN(value)) {
                     console.log("\nPlease enter a valid number.\n.red");
@@ -109,7 +109,7 @@ function promptUser() {
                 console.log(statement.red);
                 promptUser();
 
-            } else if (+itemquantity === 1) {
+            } else if (+itemQuantity === 1) {
                 statement = "\nYou are purchasing 1 " + selected.product_name + ".";
                 buyProduct();
 
@@ -131,8 +131,38 @@ function buyProduct() {
         }
     ).then(function(answer) {
         if(answer.buy) {
-            connection.query("UPDATE products SET stock_quantity - ? WHERE item_id = ?", [itemQuantity, itemID], function(err, res))
+            connection.query("UPDATE products SET stock_quantity = stock_quantity - ? WHERE item_id = ?", [itemQuantity, itemID], function(err, res) {
+                if (err) throw err;
+                var totalStatement = "\nYour total is $" +
+                (itemQuantity * selected.price) + "\n";
+                console.log(totalStatement.cyan);
+                setTimeout(buyDifferent, 1000);
+            });
+        } else {
+            buyDifferent();
         }
-    })
+    });
+}
+
+function buyDifferent() {
+    inquirer.prompt(
+        {
+            name: "differentItem",
+            type: "confirm",
+            message: "Would you like to purchase a different item?"
+        }
+    ).then(function(answer) {
+        if (answer.differentItem) {
+            showItems();
+            setTimeout(promptUser, 1000);
+        } else {
+            exit();
+        }
+    });
+}
+
+function exit() {
+    console.log("\nThanks for visiting Bamazon! Have a great day!\n".cyan);
+    connection.end();
 }
 
