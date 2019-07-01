@@ -68,12 +68,14 @@ function promptUser() {
             type: "input",
             message: "Please enter the ID number of the item that you would like to purchase.",
             validate: function(value) {
-                if (value <= 0 || isNaN(value)) {
+                
+                if (value <= 0 || isNaN(value) || value > 10 ) {
                     console.log("\nPlease enter a valid item ID number.\n".red);
                 } else {
                     return true;
-                }
-            }        
+            }}
+            
+                      
         },
         {
             name: "quantity",
@@ -93,6 +95,8 @@ function promptUser() {
 
         connection.query("SELECT * FROM products WHERE  item_id=" + itemID, function(err,res) {
             selected = res[0];
+
+            
 
             if(itemQuantity > selected.stock_quantity && selected.stock_quantity > 1) {
                 statement = "\nWe're sorry, we only have " + selected.stock_quantity + " " + selected.product_name + "s available at this time.\n";
