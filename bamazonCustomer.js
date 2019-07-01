@@ -61,22 +61,22 @@ function showItems() {
     });
 }
 
+
+
 function promptUser() {
     inquirer.prompt([
         {
-            name: "id",
-            type: "input",
-            message: "Please enter the ID number of the item that you would like to purchase.",
-            validate: function(value) {
-                
-                if (value <= 0 || isNaN(value) || value > 10 ) {
-                    console.log("\nPlease enter a valid item ID number.\n".red);
-                } else {
-                    return true;
-            }}
-            
-                      
-        },
+			name: "id",
+			type: "input",
+			message: "Please enter the ID number of the item you'd like to purchase.",
+			validate: function(value) {
+				if (value <= 0 || isNaN(value)) {
+					console.log("\nPlease enter a valid item ID.\n".red);
+				} else {
+					return true;
+				}
+			}
+		},
         {
             name: "quantity",
             type: "input",
