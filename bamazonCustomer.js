@@ -25,7 +25,9 @@ connection.connect(function(err) {
 
 //starts the app and initiates conversation with customer
 function start() {
-    console.log("\nWELCOME TO THE BAMAZON STORE!\n".cyan);
+    console.log("\n_____________________________\n".green);
+    console.log("\nWELCOME TO THE BAMAZON STORE!\n".green);
+    console.log("\n_____________________________\n".green);
     inquirer.prompt(
         {
             name: "browse",
